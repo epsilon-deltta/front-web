@@ -1,0 +1,157 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- jquery -->
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <!-- Load c3.css -->
+    <!-- Load d3.js and c3.js -->
+    <!-- <link href="/c3-0.7.20/c3.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="/c3-0.7.20/c3.min.js"></script> -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css" />
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js"></script>
+
+    <!-- <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.css" integrity="sha512-cznfNokevSG7QPA5dZepud8taylLdvgr0lDqw/FEZIhluFsSwyvS81CMnRdrNSKwbsmc43LtRd2/WMQV+Z85AQ==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js" integrity="sha512-+IpCthlNahOuERYUSnKFjzjdKXIbJ/7Dd6xvUp+7bEw0Jp2dg6tluyxLs+zq9BMzZgrLv8886T4cBSqnKiVgUw==" crossorigin="anonymous"></script> -->
+    <!-- 
+    <script src="https://d3js.org/d3.v6.min.js"></script>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css" integrity="sha512-GQSxWe9Cj4o4EduO7zO9HjULmD4olIjiQqZ7VJuwBxZlkWaUFGCxRkn39jYnD2xZBtEilm0m4WBG7YEmQuMs5Q==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.js" integrity="sha512-11Z4MD9csmC3vH8Vd0eIPJBQu3uEHEqeznWEt3sLBCdQx3zm9mJbBcJH8WTcyGY9EXDE81BNpjE2vLosPK8cFQ==" crossorigin="anonymous"></script> -->
+</head>
+
+<body>
+    <!-- javascript -->
+    <h2><a href='/index.html'>Data portal</a></h2>
+    <ul class="nav nav-tabs">
+        <li role="presentation" ><a href="./index.html">Home</a></li>
+        <li role="presentation" class="active"><a href="./hexamer_test.html">Hexamer_track</a></li>
+        <!-- <li role="presentation"><a href="#">Messages</a></li> -->
+    </ul>
+    <div class="input-group center-block" style="width: 60%;">
+        <input id="seq" type="text" class="form-control" placeholder="Enter Sequence" onkeypress="javascript:if(event.keyCode == 13){sendSeq()}">
+        <span class="input-group-btn">
+            <button class="btn btn-secondary" type="button" onclick="sendSeq()">Run</button>
+        </span>
+    </div>
+
+    <h5 id="seq_text"></h5>
+    <img id="track_img">
+    <h5 id="test"></h5>
+    <div id="chart"></div>
+    <div id="chart0"></div>
+    <div id="chart1"></div>
+    <script src=".\graph\percent.js"></script>
+    <script>
+        $("#seq").focus();
+        function sendSeq(){
+            var seq = $("#seq").val() ;
+            if(seq=='')
+                alert("Enter sequence first!! 😜");
+                // $("#test").text(track_data['']);
+            track_data = get_track_data(seq);
+            // alert(track_data['base64'])
+            $("#track_img").attr('src','data:image/pdf;base64,'+track_data['base64'])
+            
+        }
+        
+        function get_track_data(seq){
+            track_data = {}
+            $.ajax({
+                type   : "post",
+                async  : false,
+                url    : "http://143.248.23.236:1234/seq/",
+                contentType:'application/json; charset=utf-8',
+                dataType: 'json',
+                data   : JSON.stringify({"seq" :seq }),
+                success: function(received_data){
+                    track_data = received_data;
+                },
+                error  : function(){alert("requesting to server is failed ....")}
+            });
+            return track_data
+        }
+        var data0 = 3;
+        function uploadFile() {
+            var form = $('#FILE_FORM')[0];
+            var formData = new FormData();
+            formData.append("fileObj", $("#FILE_TAG")[0].files[0]);
+            formData.append("fileObj2", $("#FILE_TAG2")[0].files[0]);
+            $.ajax({
+                url: 'http://127.0.0.1:8000/rna/',
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                data: formData,
+                type: 'POST',
+                success: function (result) {
+                    showGraph(result);
+                }
+            });
+        }
+        function showGraph(result) {
+            showPie(result);
+            showDonut(result);
+            showGuage(result);
+        }
+        function jsonProcessor(jdata) {
+            console.log(jdata['a']);
+            console.log(jdata['g']);
+            console.log(jdata['dna'].split(''))
+        }
+
+
+        // setTimeout(function () {|
+        //     chart.unload({
+        //         ids: 'data1'
+        //     });
+        //     chart.unload({
+        //         ids: 'data2'
+        //     });
+        // }, 2500);
+
+    </script>
+    <script>
+
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 10]]
+        //     });
+        // }, 1000);
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 50]]
+        //     });
+        // }, 2000);
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 70]]
+        //     });
+        // }, 3000);
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 0]]
+        //     });
+        // }, 4000);
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 100]]
+        //     });
+        // }, 5000);
+    </script>
+</body>
+
+</html>

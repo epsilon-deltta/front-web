@@ -1,0 +1,117 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!-- Load c3.css -->
+    <!-- Load d3.js and c3.js -->
+    <!-- <link href="/c3-0.7.20/c3.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="/c3-0.7.20/c3.min.js"></script> -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css" />
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js"></script>
+    
+    <!-- <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.css" integrity="sha512-cznfNokevSG7QPA5dZepud8taylLdvgr0lDqw/FEZIhluFsSwyvS81CMnRdrNSKwbsmc43LtRd2/WMQV+Z85AQ==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js" integrity="sha512-+IpCthlNahOuERYUSnKFjzjdKXIbJ/7Dd6xvUp+7bEw0Jp2dg6tluyxLs+zq9BMzZgrLv8886T4cBSqnKiVgUw==" crossorigin="anonymous"></script> -->
+<!-- 
+    <script src="https://d3js.org/d3.v6.min.js"></script>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css" integrity="sha512-GQSxWe9Cj4o4EduO7zO9HjULmD4olIjiQqZ7VJuwBxZlkWaUFGCxRkn39jYnD2xZBtEilm0m4WBG7YEmQuMs5Q==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.js" integrity="sha512-11Z4MD9csmC3vH8Vd0eIPJBQu3uEHEqeznWEt3sLBCdQx3zm9mJbBcJH8WTcyGY9EXDE81BNpjE2vLosPK8cFQ==" crossorigin="anonymous"></script> -->
+</head>
+
+<body>
+    <!-- javascript -->
+
+    <form id="FILE_FORM" method="post" enctype="multipart/form-data" action="">
+        <input type="file" id="FILE_TAG" name="FILE_TAG">
+        <input type="file" id="FILE_TAG2" name="FILE_TAG2">
+        <a class="ui-shadow ui-btn ui-corner-all" href="javascript:uploadFile();">전송</a>
+    </form>
+    
+    <div id="chart"></div>
+    <div id="chart0"></div>
+    <div id="chart1"></div>
+    <script src=".\graph\percent.js"></script>    
+    <script>
+        var data0 = 3;
+        function uploadFile() {
+            var form = $('#FILE_FORM')[0];
+            var formData = new FormData();
+            formData.append("fileObj", $("#FILE_TAG")[0].files[0]);
+            formData.append("fileObj2", $("#FILE_TAG2")[0].files[0]);
+            $.ajax({
+                url: 'http://127.0.0.1:8000/rna/',
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                data: formData,
+                type: 'POST',
+                success: function (result) {
+                    showGraph(result);
+                }
+            });
+        }
+        function showGraph(result){
+            showPie(result);
+            showDonut(result);
+            showGuage(result);
+        }
+        function jsonProcessor(jdata) {
+            console.log(jdata['a']);
+            console.log(jdata['g']);
+            console.log(jdata['dna'].split(''))
+        }
+
+
+        // setTimeout(function () {|
+        //     chart.unload({
+        //         ids: 'data1'
+        //     });
+        //     chart.unload({
+        //         ids: 'data2'
+        //     });
+        // }, 2500);
+
+    </script>
+    <script>
+ 
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 10]]
+        //     });
+        // }, 1000);
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 50]]
+        //     });
+        // }, 2000);
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 70]]
+        //     });
+        // }, 3000);
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 0]]
+        //     });
+        // }, 4000);
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [['data', 100]]
+        //     });
+        // }, 5000);
+    </script>
+</body>
+
+</html>
